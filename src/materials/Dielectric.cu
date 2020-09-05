@@ -4,15 +4,15 @@
 
 #include "Dielectric.h"
 
-Dielectric::Dielectric(double refractiveIndex): refractiveIndex(refractiveIndex) {}
+__host__ __device__ Dielectric::Dielectric(double refractiveIndex): refractiveIndex(refractiveIndex) {}
 
-double schlick(double cosine, double refractiveIndex) {
+__host__ __device__ double schlick(double cosine, double refractiveIndex) {
     auto r0 = (1-refractiveIndex) / (1+refractiveIndex);
     r0 = r0*r0;
     return r0+(1-r0)*pow((1-cosine),5);
 }
 
-bool Dielectric::scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const {
+__host__ __device__ bool Dielectric::scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const {
     attenuation = Color(1,1,1);
     double refractiveIndexRatio = refractiveIndex;
     Vec3 normal = hit.normal.normalized();
@@ -29,7 +29,7 @@ bool Dielectric::scatter(const Ray &ray, const HitResult &hit, Color &attenuatio
     double sinTheta = sqrt(1-cosTheta2);
     double reflectionProbability = schlick(cosTheta, refractiveIndexRatio); // glass acts like a mirror at grazing angles
 
-    if(sinTheta*refractiveIndexRatio > 1.0 || randomDouble() < reflectionProbability) {
+    if(sinTheta*refractiveIndexRatio > 1.0/* TODO || randomDouble() < reflectionProbability*/) {
         // reflection
         Vec3 reflected = reflect(incidentRay, normal);
         scattered = Ray(hit.point, reflected);

@@ -7,9 +7,9 @@
 #include <utility>
 #include "Material.h"
 
-Sphere::Sphere(Point3 center, double radius, shared_ptr<Material> material): center(center), radius(radius), material(std::move(material)) {}
+__host__ __device__ Sphere::Sphere(Point3 center, double radius, Material* material): center(center), radius(radius), material(material) {}
 
-void Sphere::fillResult(HitResult& result, const Ray& ray, double t) const {
+__host__ __device__ void Sphere::fillResult(HitResult& result, const Ray& ray, double t) const {
     Point3 intersectionPoint = ray.at(t);
     Vec3 normal = (intersectionPoint-getCenter()) / getRadius();
     result.t = t;
@@ -18,7 +18,7 @@ void Sphere::fillResult(HitResult& result, const Ray& ray, double t) const {
     result.material = material;
 }
 
-bool Sphere::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
+__host__ __device__ bool Sphere::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
     auto ac = ray.origin()-getCenter();
     auto a = ray.direction().lengthSquared();
     auto halfB = dot(ac, ray.direction());
@@ -44,20 +44,10 @@ bool Sphere::hit(const Ray &ray, double mint, double maxt, HitResult &result) co
     }
 }
 
-Point3 Sphere::getCenter() const {
+__host__ __device__ Point3 Sphere::getCenter() const {
     return center;
 }
 
-double Sphere::getRadius() const {
+__host__ __device__ double Sphere::getRadius() const {
     return radius;
 }
-
-shared_ptr<Material>& Sphere::getMaterial() {
-    return material;
-}
-
-const shared_ptr<Material>& Sphere::getMaterial() const {
-    return material;
-}
-
-

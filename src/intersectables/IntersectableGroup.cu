@@ -4,16 +4,15 @@
 
 #include "IntersectableGroup.h"
 
-IntersectableGroup::IntersectableGroup(vector<shared_ptr<Intersectable>> &&v): elements(std::move(v)) {}
-IntersectableGroup::IntersectableGroup(std::initializer_list<shared_ptr<Intersectable>> l): elements(l) {}
+__host__ __device__ IntersectableGroup::IntersectableGroup(int elementCount, Intersectable** elements): elementCount(elementCount), elements(elements) {}
 
-bool IntersectableGroup::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
+__host__ __device__ bool IntersectableGroup::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
     auto closest = maxt;
     HitResult tmpResult{};
     auto hit = false;
 
-    for(const auto& element : elements) {
-        if(element->hit(ray, mint, closest, tmpResult)) {
+    for(int i = 0; i < elementCount; i++) {
+        if(elements[i]->hit(ray, mint, closest, tmpResult)) {
             closest = tmpResult.t;
             result = tmpResult;
             hit = true;

@@ -11,7 +11,7 @@ private:
     Color albedo;
 
 public:
-    explicit Lambertian(const Color& a);
+    __host__ __device__ explicit Lambertian(const Color& a);
 
-    bool scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const override;
+    __host__ __device__ bool scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const override;
 };

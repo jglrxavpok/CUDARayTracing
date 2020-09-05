@@ -10,7 +10,7 @@ private:
     double refractiveIndex;
 
 public:
-    explicit Dielectric(double refractiveIndex);
+    __host__ __device__ explicit Dielectric(double refractiveIndex);
 
-    bool scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const override;
+    __host__ __device__ bool scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const override;
 };

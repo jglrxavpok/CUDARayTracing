@@ -12,11 +12,11 @@ class Material;
 
 class HitResult {
 public:
-    __host__ __device__ HitResult() = default;
-    __host__ __device__ ~HitResult() = default;
+    HitResult() = default;
+    ~HitResult() = default;
 
     Point3 point;
     Vec3 normal;
     double t;
-    shared_ptr<Material> material;
+    Material* material = nullptr;
 };
