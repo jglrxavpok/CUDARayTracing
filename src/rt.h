@@ -12,15 +12,18 @@
 #include "colors.h"
 
 #include <random>
+#include <curand_kernel.h>
 
 constexpr double PI = 3.1415926535897932385;
 
-inline double randomDouble() {
-    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    static std::mt19937 generator;
-    return distribution(generator);
+__host__ __device__ inline double randomDouble(curandState* rand) {
+#ifdef __CUDA_ARCH__
+    return curand_uniform_double(rand);
+#else
+    return 0.5;
+#endif
 }
 
-inline double randomDouble(double min, double max) {
-    return randomDouble()*(max-min) + min;
+__host__ __device__ inline double randomDouble(curandState* rand, double min, double max) {
+    return randomDouble(rand)*(max-min) + min;
 }

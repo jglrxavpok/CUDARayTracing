@@ -6,6 +6,7 @@
 
 #include "math.h"
 #include <iostream>
+#include <curand_kernel.h>
 
 class Vec3 {
 private:
@@ -61,10 +62,9 @@ public:
     }
 
 public:
-    static Vec3 random();
-    static Vec3 random(double min, double max);
-    static Vec3 randomInUnitSphere();
-    static Vec3 randomUnitVector();
+    __host__ __device__ static Vec3 random(curandState* rand, double min, double max);
+    __host__ __device__ static Vec3 randomInUnitSphere(curandState* rand);
+    __host__ __device__ static Vec3 randomUnitVector(curandState* rand);
 };
 
 inline std::ostream& operator<<(std::ostream &out, const Vec3 &v) {

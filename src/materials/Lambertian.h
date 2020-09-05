@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <curand_kernel.h>
 #include "Material.h"
 
 class Lambertian: public Material {
@@ -13,5 +14,6 @@ private:
 public:
     __host__ __device__ explicit Lambertian(const Color& a);
 
-    __host__ __device__ bool scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const override;
+    __host__ __device__ bool
+    scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const override;
 };

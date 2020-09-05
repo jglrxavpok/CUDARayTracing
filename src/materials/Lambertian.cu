@@ -6,8 +6,9 @@
 
 __host__ __device__ Lambertian::Lambertian(const Color &a): albedo(a) {}
 
-__host__ __device__ bool Lambertian::scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const {
-    Vec3 direction = hit.normal;// TODO + Vec3::randomUnitVector();
+__host__ __device__ bool
+Lambertian::scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const {
+    Vec3 direction = hit.normal + Vec3::randomInUnitSphere(rand);
     scattered = Ray(hit.point, direction);
     attenuation = albedo;
     return true;

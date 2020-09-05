@@ -6,9 +6,13 @@
 
 __host__ __device__ Metal::Metal(const Color &a, double fuzzyness): albedo(a), fuzzyness(fuzzyness < 1 ? fuzzyness : 1) {}
 
-__host__ __device__ bool Metal::scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const {
+__host__ __device__ bool
+Metal::scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const {
     Vec3 reflected = reflect(ray.direction().normalized(), hit.normal.normalized());
-    scattered = Ray(hit.point, reflected/* TODO + fuzzyness * Vec3::randomInUnitSphere()*/);
+    if(fuzzyness > 0) {
+        reflected += fuzzyness * Vec3::randomInUnitSphere(rand);
+    }
+    scattered = Ray(hit.point, reflected);
     attenuation = albedo;
     return dot(scattered.direction(), hit.normal) > 0;
 }

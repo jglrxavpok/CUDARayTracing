@@ -12,7 +12,8 @@ __host__ __device__ double schlick(double cosine, double refractiveIndex) {
     return r0+(1-r0)*pow((1-cosine),5);
 }
 
-__host__ __device__ bool Dielectric::scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const {
+__host__ __device__ bool
+Dielectric::scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const {
     attenuation = Color(1,1,1);
     double refractiveIndexRatio = refractiveIndex;
     Vec3 normal = hit.normal.normalized();
@@ -29,7 +30,8 @@ __host__ __device__ bool Dielectric::scatter(const Ray &ray, const HitResult &hi
     double sinTheta = sqrt(1-cosTheta2);
     double reflectionProbability = schlick(cosTheta, refractiveIndexRatio); // glass acts like a mirror at grazing angles
 
-    if(sinTheta*refractiveIndexRatio > 1.0/* TODO || randomDouble() < reflectionProbability*/) {
+
+    if(sinTheta*refractiveIndexRatio > 1.0 || randomDouble(rand) < reflectionProbability) {
         // reflection
         Vec3 reflected = reflect(incidentRay, normal);
         scattered = Ray(hit.point, reflected);

@@ -3,6 +3,8 @@
 //
 
 #pragma once
+
+#include <curand_kernel.h>
 #include "Material.h"
 
 class Dielectric: public Material {
@@ -12,5 +14,6 @@ private:
 public:
     __host__ __device__ explicit Dielectric(double refractiveIndex);
 
-    __host__ __device__ bool scatter(const Ray &ray, const HitResult &hit, Color &attenuation, Ray &scattered) const override;
+    __host__ __device__ bool
+    scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const override;
 };

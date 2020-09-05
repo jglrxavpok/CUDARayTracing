@@ -17,11 +17,11 @@ using std::shared_ptr;
 using std::vector;
 
 static constexpr double ASPECT_RATIO = 16.0/9.0;
-static constexpr int IMAGE_HEIGHT = 720;
+static constexpr int IMAGE_HEIGHT = 1080;
 static constexpr int IMAGE_WIDTH = static_cast<int>(IMAGE_HEIGHT*ASPECT_RATIO);
-static constexpr int MAX_BOUNCE = 50;
+static constexpr int MAX_BOUNCE = 20;
 
-__device__ Color trace(const Ray& r, const Intersectable* world, int remainingRays = MAX_BOUNCE) {
+__device__ Color trace(const Ray& r, const Intersectable* world, curandState* rand, int remainingRays = MAX_BOUNCE) {
     Color skyBlue = Color(0.5, 0.7, 1.0);
     Color white = Color(1.0, 1.0, 1.0);
     Color red = Color(1.0, 0.0, 0.0);
@@ -35,8 +35,8 @@ __device__ Color trace(const Ray& r, const Intersectable* world, int remainingRa
     if(world->hit(r, 0.001, INFINITY, result)) { // 0.001 to remove shadow acne
         Ray scattered{};
         Color attenuation{};
-        if(result.material->scatter(r, result, attenuation, scattered)) {
-            return attenuation * trace(scattered, world, remainingRays-1);
+        if(result.material->scatter(r, result, rand, attenuation, scattered)) {
+            return attenuation * trace(scattered, world, rand, remainingRays-1);
         }
         return white;
     }
@@ -78,7 +78,7 @@ void rayTrace(uint8_t* pixels, curandState* rngState, Intersectable** worldPtr) 
         double u = double(x+dx) / (IMAGE_WIDTH-1);
         double v = double(y+dy) / (IMAGE_HEIGHT-1);
 
-        pixelColor += trace(camera.generateRay(u, v), world);
+        pixelColor += trace(camera.generateRay(u, v), world, &localRandState);
     }
 
     writeColor(pixels, ptr, pixelColor, Camera::SAMPLES_PER_PIXEL);
@@ -98,7 +98,7 @@ Color traceHost(const Ray& r, const Intersectable& world, int remainingRays = MA
     if(world.hit(r, 0.001 /* remove shadow acne */, INFINITY, result)) {
         Ray scattered{};
         Color attenuation{};
-        if(result.material->scatter(r, result, attenuation, scattered)) {
+        if(result.material->scatter(r, result, nullptr, attenuation, scattered)) {
             return attenuation * traceHost(scattered, world, remainingRays-1);
         }
         return white;
@@ -115,11 +115,15 @@ void worldInit(Intersectable** world, Intersectable** list) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
         auto materialGround = new Lambertian(Color(0.8, 0.8, 0.0));
         auto materialCenter = new Lambertian(Color(0.1, 0.2, 0.5));
-        auto materialRight = new Metal(Color(0.1, 0.2, 0.5), 0.0);
+        auto materialRight = new Metal(Color(0.8, 0.6, 0.2), 0.0);
+        auto materialLeft = new Dielectric(1.5);
+
         *list = new Sphere(Point3( 0.0, -100.5, -1.0), 100.0, materialGround);
         *(list+1) = new Sphere(Point3( 0.0,    0.0, -1.0), 0.5, materialCenter);
         *(list+2) = new Sphere(Point3( 1.0,    0.0, -1.0), 0.5, materialRight);
-        *(world) = new IntersectableGroup(3, list);
+        *(list+3) = new Sphere(Point3( -1.0,    0.0, -1.0), 0.5, materialLeft);
+        *(list+4) = new Sphere(Point3( -1.0,    0.0, -1.0), -0.45, materialLeft);
+        *(world) = new IntersectableGroup(5, list);
     }
 }
 
@@ -127,6 +131,8 @@ int main()
 {
     uint8_t* pixels;
     checkCudaErrors(cudaMallocManaged(&pixels, sizeof(uint8_t)*IMAGE_WIDTH*IMAGE_HEIGHT*4));
+
+    std::cout << "Allocated " << IMAGE_WIDTH << "x" << IMAGE_HEIGHT << " image." << std::endl;
 
     int tileWidth = 8;
     int tileHeight = 8;
@@ -144,7 +150,7 @@ int main()
 
     Intersectable** elements;
     Intersectable** world;
-    checkCudaErrors(cudaMalloc(&elements, 3*sizeof(Intersectable*)));
+    checkCudaErrors(cudaMalloc(&elements, 5*sizeof(Intersectable*)));
     checkCudaErrors(cudaMalloc(&world, sizeof(Intersectable*)));
 
     worldInit<<<blocks, threads>>>(world, elements);
