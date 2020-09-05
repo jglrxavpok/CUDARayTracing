@@ -42,8 +42,8 @@ __device__ bool Triangle::hit(const Ray &ray, double mint, double maxt, HitResul
         result.material = material;
         result.point = ray.at(t);
         float w = 1-v-u;
-        result.normal = normalA * u + normalB * v + normalC * w;
-        result.uvwMapping = uvA * u + uvB * v + uvC * w;
+        result.normal = normalA * w + normalB * u + normalC * v;
+        result.uvwMapping = uvA * w + uvB * u + uvC * v;
         return true;
     }
     return false;

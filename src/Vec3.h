@@ -15,8 +15,8 @@ private:
     double _z;
 
 public:
-    __device__ Vec3(): _x(0), _y(0), _z(0) {}
-    __device__ Vec3(double x, double y, double z): _x(x), _y(y), _z(z) {}
+    __host__ __device__ Vec3(): _x(0), _y(0), _z(0) {}
+    __host__ __device__ Vec3(double x, double y, double z): _x(x), _y(y), _z(z) {}
 
     __host__ __device__ double x() const {
         return this->_x;

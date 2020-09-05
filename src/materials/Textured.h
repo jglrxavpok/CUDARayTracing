@@ -9,7 +9,7 @@
 
 class Textured: public Material {
 public:
-    __device__ explicit Textured(Texture* texture, Material* baseMaterial);
+    __device__ explicit Textured(Texture* texture, Material* baseMaterial, double blendFactor = 0.5);
     __device__ explicit Textured(Texture* texture);
 
     __device__ bool scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const override;
@@ -17,5 +17,6 @@ public:
 private:
     Texture* texture;
     Material* baseMaterial;
+    double blendFactor;
 };
 

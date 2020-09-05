@@ -8,7 +8,16 @@
 
 class Texture {
 public:
+    __device__ Texture(int width, int height, Color* pixels);
+    virtual ~Texture() = default;
+
     __device__ virtual Color at(Point3 position);
 
-    virtual ~Texture() = default;
+    __host__ static Texture** loadFromFile(const std::string& name);
+
+private:
+    int width;
+    int height;
+    Color* pixels;
+
 };

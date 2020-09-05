@@ -21,7 +21,7 @@ using std::shared_ptr;
 using std::vector;
 
 static constexpr double ASPECT_RATIO = 16.0/9.0;
-static constexpr int IMAGE_HEIGHT = 400;
+static constexpr int IMAGE_HEIGHT = 720;
 static constexpr int IMAGE_WIDTH = static_cast<int>(IMAGE_HEIGHT*ASPECT_RATIO);
 static constexpr int MAX_BOUNCE = 20;
 static constexpr int OBJECT_COUNT = 6;
@@ -90,7 +90,7 @@ void rayTrace(uint8_t* pixels, curandState* rngState, Intersectable** worldPtr) 
 }
 
 __global__
-void worldInit(Intersectable** world, Intersectable** list) {
+void worldInit(Intersectable** world, Intersectable** list, Texture** triangleTexture) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
         auto materialGround = new Lambertian(Color(0.8, 0.8, 0.0));
         auto materialCenter = new Lambertian(Color(0.1, 0.2, 0.5));
@@ -103,12 +103,11 @@ void worldInit(Intersectable** world, Intersectable** list) {
         *(list+3) = new Sphere(Point3( -1.0,    0.0, -1.0), 0.5, materialLeft);
         *(list+4) = new Sphere(Point3( -1.0,    0.0, -1.0), -0.45, materialLeft);
 
-        Texture* triangleTexture = new Texture{}; // TODO: load from file
         *(list+5) = new Triangle(
                 Point3( -1.0, 0.0, -2.0), Point3( 1.0, 0.0, -2.0), Point3( 0.0, 1.0, -2.0),
                 Vec3(0, 0, 1), Vec3(0, 0, 1), Vec3(0, 0, 1),
                 Point3(0.0,0.0,0.0), Point3(1.0,0.0,0.0), Point3(0.5,1.0,0.0),
-                new Textured(triangleTexture, new Metal(Color(1.0,1.0,1.0), 0.0)));
+                new Textured(*triangleTexture, new Metal(Color(1,1,1), 0.1), 0.9));
         *(world) = new IntersectableGroup(OBJECT_COUNT, list);
     }
 }
@@ -139,7 +138,8 @@ int main()
     checkCudaErrors(cudaMalloc(&elements, OBJECT_COUNT*sizeof(Intersectable*)));
     checkCudaErrors(cudaMalloc(&world, sizeof(Intersectable*)));
 
-    worldInit<<<blocks, threads>>>(world, elements);
+    Texture** checkerboardTexture = Texture::loadFromFile("checkerboard.png");
+    worldInit<<<blocks, threads>>>(world, elements, checkerboardTexture);
     checkCudaErrors(cudaPeekAtLastError());
     checkCudaErrors(cudaDeviceSynchronize());
 
