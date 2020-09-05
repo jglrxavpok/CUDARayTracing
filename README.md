@@ -4,4 +4,4 @@ Ray tracer based on https://developer.nvidia.com/blog/accelerated-ray-tracing-cu
 
 Outputs a raytraced image in 'test.png' in the working directory.
 
-![Current output](out/test.png)
+![Current output](fullHD_cpu.png)
