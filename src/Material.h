@@ -11,7 +11,7 @@ class HitResult;
 
 class Material {
 public:
-    __host__ __device__ virtual bool scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const = 0;
+    __device__ virtual bool scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const = 0;
 
     virtual ~Material() = default;
 };

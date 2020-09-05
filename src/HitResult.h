@@ -19,4 +19,5 @@ public:
     Vec3 normal;
     double t;
     Material* material = nullptr;
+    Point3 uvwMapping;
 };

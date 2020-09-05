@@ -12,8 +12,8 @@ private:
     double fuzzyness;
 
 public:
-    __host__ __device__ explicit Metal(const Color& a, double fuzzyness);
+    __device__ explicit Metal(const Color& a, double fuzzyness);
 
-    __host__ __device__ bool
+    __device__ bool
     scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const override;
 };

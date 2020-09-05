@@ -7,9 +7,9 @@
 #include <utility>
 #include "Material.h"
 
-__host__ __device__ Sphere::Sphere(Point3 center, double radius, Material* material): center(center), radius(radius), material(material) {}
+__device__ Sphere::Sphere(Point3 center, double radius, Material* material): center(center), radius(radius), material(material) {}
 
-__host__ __device__ void Sphere::fillResult(HitResult& result, const Ray& ray, double t) const {
+__device__ void Sphere::fillResult(HitResult& result, const Ray& ray, double t) const {
     Point3 intersectionPoint = ray.at(t);
     Vec3 normal = (intersectionPoint-getCenter()) / getRadius();
     result.t = t;
@@ -18,7 +18,7 @@ __host__ __device__ void Sphere::fillResult(HitResult& result, const Ray& ray, d
     result.material = material;
 }
 
-__host__ __device__ bool Sphere::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
+__device__ bool Sphere::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
     auto ac = ray.origin()-getCenter();
     auto a = ray.direction().lengthSquared();
     auto halfB = dot(ac, ray.direction());
@@ -44,10 +44,10 @@ __host__ __device__ bool Sphere::hit(const Ray &ray, double mint, double maxt, H
     }
 }
 
-__host__ __device__ Point3 Sphere::getCenter() const {
+__device__ Point3 Sphere::getCenter() const {
     return center;
 }
 
-__host__ __device__ double Sphere::getRadius() const {
+__device__ double Sphere::getRadius() const {
     return radius;
 }

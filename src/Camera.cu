@@ -4,7 +4,7 @@
 
 #include "Camera.h"
 
-__host__ __device__ Camera::Camera(Point3 lookFrom, Point3 lookAt, Vec3 vup, double fovy, double aspectRatio): fovy(fovy), aspectRatio(aspectRatio) {
+__device__ Camera::Camera(Point3 lookFrom, Point3 lookAt, Vec3 vup, double fovy, double aspectRatio): fovy(fovy), aspectRatio(aspectRatio) {
     double theta = fovy * PI / 180.0;
     double h = tan(theta/2);
     double viewportHeight = 2.0 * h;
@@ -20,6 +20,6 @@ __host__ __device__ Camera::Camera(Point3 lookFrom, Point3 lookAt, Vec3 vup, dou
     lowerLeftCorner = origin - horizontal / 2.0 - vertical / 2.0 - w;
 }
 
-__host__ __device__ Ray Camera::generateRay(double u, double v) const {
+__device__ Ray Camera::generateRay(double u, double v) const {
     return Ray(origin, lowerLeftCorner+u*horizontal+v*vertical - origin);
 }

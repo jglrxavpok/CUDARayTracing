@@ -7,11 +7,11 @@
 
 class Camera {
 public:
-    static constexpr int SAMPLES_PER_PIXEL = 100;
+    static constexpr int SAMPLES_PER_PIXEL = 50;
 
-    __host__ __device__ explicit Camera(Point3 lookFrom, Point3 lookAt, Vec3 vup, double fovy, double aspectRatio);
+    __device__ explicit Camera(Point3 lookFrom, Point3 lookAt, Vec3 vup, double fovy, double aspectRatio);
 
-    __host__ __device__ Ray generateRay(double u, double v) const;
+    __device__ Ray generateRay(double u, double v) const;
 
 private:
     double fovy;

@@ -4,15 +4,15 @@
 
 #include "Dielectric.h"
 
-__host__ __device__ Dielectric::Dielectric(double refractiveIndex): refractiveIndex(refractiveIndex) {}
+__device__ Dielectric::Dielectric(double refractiveIndex): refractiveIndex(refractiveIndex) {}
 
-__host__ __device__ double schlick(double cosine, double refractiveIndex) {
+__device__ double schlick(double cosine, double refractiveIndex) {
     auto r0 = (1-refractiveIndex) / (1+refractiveIndex);
     r0 = r0*r0;
     return r0+(1-r0)*pow((1-cosine),5);
 }
 
-__host__ __device__ bool
+__device__ bool
 Dielectric::scatter(const Ray &ray, const HitResult &hit, curandState *rand, Color &attenuation, Ray &scattered) const {
     attenuation = Color(1,1,1);
     double refractiveIndexRatio = refractiveIndex;

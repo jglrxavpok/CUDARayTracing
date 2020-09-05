@@ -16,7 +16,7 @@
 
 constexpr double PI = 3.1415926535897932385;
 
-__host__ __device__ inline double randomDouble(curandState* rand) {
+__device__ inline double randomDouble(curandState* rand) {
 #ifdef __CUDA_ARCH__
     return curand_uniform_double(rand);
 #else
@@ -24,6 +24,6 @@ __host__ __device__ inline double randomDouble(curandState* rand) {
 #endif
 }
 
-__host__ __device__ inline double randomDouble(curandState* rand, double min, double max) {
+__device__ inline double randomDouble(curandState* rand, double min, double max) {
     return randomDouble(rand)*(max-min) + min;
 }

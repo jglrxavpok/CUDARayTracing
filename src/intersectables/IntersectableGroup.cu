@@ -4,9 +4,9 @@
 
 #include "IntersectableGroup.h"
 
-__host__ __device__ IntersectableGroup::IntersectableGroup(int elementCount, Intersectable** elements): elementCount(elementCount), elements(elements) {}
+__device__ IntersectableGroup::IntersectableGroup(int elementCount, Intersectable** elements): elementCount(elementCount), elements(elements) {}
 
-__host__ __device__ bool IntersectableGroup::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
+__device__ bool IntersectableGroup::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
     auto closest = maxt;
     HitResult tmpResult{};
     auto hit = false;

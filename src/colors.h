@@ -6,13 +6,13 @@
 
 #include "Vec3.h"
 
-__host__ __device__ inline double clamp(double d, double min, double max) {
+__device__ inline double clamp(double d, double min, double max) {
     if(d < min) return min;
     if(d > max) return max;
     return d;
 }
 
-__host__ __device__ inline void writeColor(uint8_t* pixels, size_t startPointer, const Color color, int samplesPerPixel) {
+__device__ inline void writeColor(uint8_t* pixels, size_t startPointer, const Color color, int samplesPerPixel) {
     auto scale = 1.0/samplesPerPixel;
 
     // gamma correction + average sampling

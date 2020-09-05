@@ -18,6 +18,6 @@ private:
     Intersectable** elements;
 
 public:
-    __host__ __device__ IntersectableGroup(int elementCount, Intersectable** elements);
-    __host__ __device__ bool hit(const Ray &ray, double mint, double maxt, HitResult &result) const override;
+    __device__ IntersectableGroup(int elementCount, Intersectable** elements);
+    __device__ bool hit(const Ray &ray, double mint, double maxt, HitResult &result) const override;
 };
