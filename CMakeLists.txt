@@ -6,17 +6,17 @@ set(CMAKE_CUDA_STANDARD 14)
 
 set(CXXFILES
         src/main.cu
-        src/Ray.cpp
-        src/collisions.cpp
-        src/Intersectable.cpp
-        src/intersectables/Sphere.cpp
-        src/intersectables/IntersectableGroup.cpp
-        src/Camera.cpp
-        src/Vec3.cpp
-        src/Material.cpp
-        src/materials/Lambertian.cpp
-        src/materials/Metal.cpp
-        src/materials/Dielectric.cpp
+        src/Ray.cu
+        src/collisions.cu
+        src/Intersectable.cu
+        src/intersectables/Sphere.cu
+        src/intersectables/IntersectableGroup.cu
+        src/Camera.cu
+        src/Vec3.cu
+        src/Material.cu
+        src/materials/Lambertian.cu
+        src/materials/Metal.cu
+        src/materials/Dielectric.cu
         )
 
 include_directories(${PROJECT_SOURCE_DIR}/src)

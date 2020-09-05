@@ -12,11 +12,11 @@ private:
     Vec3 _direction;
 
 public:
-    explicit Ray();
-    explicit Ray(Vec3 origin, Vec3 direction);
+    __host__ __device__ explicit Ray();
+    __host__ __device__ explicit Ray(Vec3 origin, Vec3 direction);
 
-    Vec3 at(double t) const;
+    __host__ __device__ Vec3 at(double t) const;
 
-    Vec3 origin() const;
-    Vec3 direction() const;
+    __host__ __device__ Vec3 origin() const;
+    __host__ __device__ Vec3 direction() const;
 };

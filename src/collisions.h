@@ -12,6 +12,9 @@ class Material;
 
 class HitResult {
 public:
+    __host__ __device__ HitResult() = default;
+    __host__ __device__ ~HitResult() = default;
+
     Point3 point;
     Vec3 normal;
     double t;

@@ -9,6 +9,6 @@
 
 class Intersectable {
 public:
-    virtual bool hit(const Ray& ray, double mint, double maxt, HitResult& result) const = 0;
-    virtual ~Intersectable() = default;
+    __host__ __device__ virtual bool hit(const Ray& ray, double mint, double maxt, HitResult& result) const = 0;
+    __host__ __device__ virtual ~Intersectable() = default;
 };

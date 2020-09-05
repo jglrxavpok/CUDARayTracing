@@ -18,5 +18,5 @@ private:
 public:
     IntersectableGroup(std::initializer_list<shared_ptr<Intersectable>> l);
     explicit IntersectableGroup(vector<shared_ptr<Intersectable>>&& v);
-    bool hit(const Ray &ray, double mint, double maxt, HitResult &result) const override;
+    __host__ __device__ bool hit(const Ray &ray, double mint, double maxt, HitResult &result) const override;
 };
