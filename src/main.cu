@@ -22,10 +22,10 @@ using std::shared_ptr;
 using std::vector;
 
 static constexpr double ASPECT_RATIO = 16.0/9.0;
-static constexpr int IMAGE_HEIGHT = 1080;
+static constexpr int IMAGE_HEIGHT = 200;
 static constexpr int IMAGE_WIDTH = static_cast<int>(IMAGE_HEIGHT*ASPECT_RATIO);
 static constexpr int MAX_BOUNCE = 20;
-static constexpr int OBJECT_COUNT = 6;
+static constexpr int OBJECT_COUNT = 7;
 
 __device__ Color trace(const Ray& r, const Intersectable* world, curandState* rand, int remainingRays = MAX_BOUNCE) {
     Color skyBlue = Color(0.5, 0.7, 1.0);
@@ -91,7 +91,7 @@ void rayTrace(uint8_t* pixels, curandState* rngState, Intersectable** worldPtr) 
 }
 
 __global__
-void worldInit(Intersectable** world, Intersectable** list, TriangleMesh** mesh, Texture** triangleTexture) {
+void worldInit(Intersectable** world, Intersectable** list, TriangleMesh* mesh, Texture** triangleTexture) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
         auto materialGround = new Lambertian(Color(0.8, 0.8, 0.0));
         auto materialCenter = new Lambertian(Color(0.1, 0.2, 0.5));
@@ -109,7 +109,7 @@ void worldInit(Intersectable** world, Intersectable** list, TriangleMesh** mesh,
                 Vec3(0, 0, 1), Vec3(0, 0, 1), Vec3(0, 0, 1),
                 Point3(0.0,0.0,0.0), Point3(1.0,0.0,0.0), Point3(0.5,1.0,0.0),
                 new Textured(*triangleTexture, new Metal(Color(1,1,1), 0.1), 0.9));
-        *(list+6) = *mesh;
+        *(list+6) = mesh;
         *(world) = new IntersectableGroup(OBJECT_COUNT, list);
     }
 }
@@ -141,7 +141,7 @@ int main()
     checkCudaErrors(cudaMalloc(&world, sizeof(Intersectable*)));
 
     Texture** checkerboardTexture = Texture::loadFromFile("checkerboard.png");
-    worldInit<<<blocks, threads>>>(world, elements, Mesh::loadFromFile("bunny.obj"), checkerboardTexture);
+    worldInit<<<blocks, threads>>>(world, elements, TriangleMesh::loadFromFile("bunny.obj"), checkerboardTexture);
     checkCudaErrors(cudaPeekAtLastError());
     checkCudaErrors(cudaDeviceSynchronize());
 

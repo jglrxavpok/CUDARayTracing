@@ -10,10 +10,13 @@
 
 class TriangleMesh: public Intersectable {
 private:
-    int triangleCount;
-    Triangle** triangles;
-    Material* material;
+    IntersectableGroup* backingRepresentation;
 
 public:
-    __host__ static TriangleMesh** loadFromFile(const std::string& name);
+    __device__ explicit TriangleMesh(IntersectableGroup* backing);
+
+    __device__ bool hit(const Ray &ray, double mint, double maxt, HitResult &result) const override;
+
+public:
+    __host__ static TriangleMesh* loadFromFile(const std::string& name);
 };
