@@ -21,7 +21,7 @@ using std::shared_ptr;
 using std::vector;
 
 static constexpr double ASPECT_RATIO = 16.0/9.0;
-static constexpr int IMAGE_HEIGHT = 720;
+static constexpr int IMAGE_HEIGHT = 1080;
 static constexpr int IMAGE_WIDTH = static_cast<int>(IMAGE_HEIGHT*ASPECT_RATIO);
 static constexpr int MAX_BOUNCE = 20;
 static constexpr int OBJECT_COUNT = 6;

@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
+
 project(CUDARayTracing CUDA CXX)
 
 find_package(CUDA)
+set(assimp_DIR "vcpkg/packages/assimp_x86-windows/share/assimp/")
+find_package(assimp CONFIG REQUIRED)
 set(CMAKE_CUDA_STANDARD 14)
+
 
 set(CXXFILES
         src/main.cu
@@ -24,9 +28,12 @@ set(CXXFILES
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 add_executable(CUDARayTracing ${CXXFILES})
-# GTX950M: target_compile_options(CUDARayTracing PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_50,code=sm_50>)
+#GTX950M
+target_compile_options(CUDARayTracing PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_50,code=sm_50>)
 #GTX970
-target_compile_options(CUDARayTracing PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_52,code=sm_52>)
+#target_compile_options(CUDARayTracing PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_52,code=sm_52>)
+
+target_link_libraries(CUDARayTracing PRIVATE assimp::assimp)
 
 set_target_properties(
         CUDARayTracing

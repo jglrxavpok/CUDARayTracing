@@ -17,6 +17,8 @@ __device__ Color Texture::at(Point3 position) {
     if(position.y() < 0.0 || position.y() > 1.0)
         return black;
 
+    // TODO: filtering
+
     int px = static_cast<int>(position.x() * (width-1));
     int py = static_cast<int>(position.y() * (height-1));
     return pixels[py*width+px];
