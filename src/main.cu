@@ -10,6 +10,7 @@
 #include <intersectables/Triangle.h>
 #include <intersectables/IntersectableGroup.h>
 #include <materials/Textured.h>
+#include <intersectables/TriangleMesh.h>
 #include "rt.h"
 #include "Camera.h"
 #include "Material.h"
@@ -90,7 +91,7 @@ void rayTrace(uint8_t* pixels, curandState* rngState, Intersectable** worldPtr) 
 }
 
 __global__
-void worldInit(Intersectable** world, Intersectable** list, Texture** triangleTexture) {
+void worldInit(Intersectable** world, Intersectable** list, TriangleMesh** mesh, Texture** triangleTexture) {
     if (threadIdx.x == 0 && blockIdx.x == 0) {
         auto materialGround = new Lambertian(Color(0.8, 0.8, 0.0));
         auto materialCenter = new Lambertian(Color(0.1, 0.2, 0.5));
@@ -108,6 +109,7 @@ void worldInit(Intersectable** world, Intersectable** list, Texture** triangleTe
                 Vec3(0, 0, 1), Vec3(0, 0, 1), Vec3(0, 0, 1),
                 Point3(0.0,0.0,0.0), Point3(1.0,0.0,0.0), Point3(0.5,1.0,0.0),
                 new Textured(*triangleTexture, new Metal(Color(1,1,1), 0.1), 0.9));
+        *(list+6) = *mesh;
         *(world) = new IntersectableGroup(OBJECT_COUNT, list);
     }
 }
@@ -139,7 +141,7 @@ int main()
     checkCudaErrors(cudaMalloc(&world, sizeof(Intersectable*)));
 
     Texture** checkerboardTexture = Texture::loadFromFile("checkerboard.png");
-    worldInit<<<blocks, threads>>>(world, elements, checkerboardTexture);
+    worldInit<<<blocks, threads>>>(world, elements, Mesh::loadFromFile("bunny.obj"), checkerboardTexture);
     checkCudaErrors(cudaPeekAtLastError());
     checkCudaErrors(cudaDeviceSynchronize());
 

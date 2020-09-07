@@ -15,6 +15,7 @@ set(CXXFILES
         src/Intersectable.cu
         src/intersectables/Sphere.cu
         src/intersectables/Triangle.cu
+        src/intersectables/TriangleMesh.cu
         src/intersectables/IntersectableGroup.cu
         src/Camera.cu
         src/Vec3.cu
