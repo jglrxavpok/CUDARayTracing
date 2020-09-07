@@ -24,7 +24,9 @@ set(CXXFILES
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 add_executable(CUDARayTracing ${CXXFILES})
-target_compile_options(CUDARayTracing PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_50,code=sm_50>)
+# GTX950M: target_compile_options(CUDARayTracing PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_50,code=sm_50>)
+#GTX970
+target_compile_options(CUDARayTracing PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-gencode arch=compute_52,code=sm_52>)
 
 set_target_properties(
         CUDARayTracing

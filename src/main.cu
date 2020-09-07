@@ -60,8 +60,8 @@ void rngInit(curandState* rngState) {
     if(x >= IMAGE_WIDTH || y >= IMAGE_HEIGHT)
         return;
     int yInversed = IMAGE_HEIGHT-y-1;
-    size_t ptr = (yInversed*IMAGE_WIDTH+x)*4;
-    curand_init(1984, ptr, 0, &(rngState[ptr/4]));
+    size_t ptr = yInversed*IMAGE_WIDTH+x;
+    curand_init(1984, ptr, 0, &(rngState[ptr]));
 }
 
 __global__

@@ -33,6 +33,10 @@ __host__ Texture** Texture::loadFromFile(const std::string& name) {
     int height;
     int channels;
     uint8_t* pixels = stbi_load(name.c_str(), &width, &height, &channels, 3);
+    if(!pixels) {
+        std::cerr << "Failed to load texture " << name << std::endl;
+        exit(-1);
+    }
     Color* colors;
     checkCudaErrors(cudaMallocManaged(&colors, sizeof(Color)*width*height));
 
