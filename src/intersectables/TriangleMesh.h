@@ -8,6 +8,8 @@
 #include "Triangle.h"
 #include "IntersectableGroup.h"
 
+// TODO: transforms
+// TODO: optimisations
 class TriangleMesh: public Intersectable {
 private:
     IntersectableGroup* backingRepresentation;

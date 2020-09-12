@@ -41,7 +41,7 @@ public:
         return *this;
     }
 
-    __device__ Vec3& operator+=(const Vec3& other) {
+    __host__ __device__ Vec3& operator+=(const Vec3& other) {
         _x += other.x();
         _y += other.y();
         _z += other.z();
@@ -52,6 +52,13 @@ public:
         _x *= other.x();
         _y *= other.y();
         _z *= other.z();
+        return *this;
+    }
+
+    __host__ __device__ Vec3& operator*=(const float t) {
+        _x *= t;
+        _y *= t;
+        _z *= t;
         return *this;
     }
 

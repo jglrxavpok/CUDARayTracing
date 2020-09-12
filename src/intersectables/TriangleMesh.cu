@@ -7,6 +7,7 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 #include <vector>
+#include <materials/Lambertian.h>
 #include "cudautils.h"
 #include "Material.h"
 #include "materials/Metal.h"
@@ -21,12 +22,12 @@ void allocate(T** destination, Args ... args) {
 
 template<typename T, typename ... Args>
 T* deviceNew(Args ... args) {
-    T* result;
-    cudaMallocManaged(&result, sizeof(T*));
-    allocate<T> <<<1, 1>>>(&result, args...);
+    T** result;
+    cudaMallocManaged(&result, sizeof(T**));
+    allocate<T> <<<1, 1>>>(result, args...);
     checkCudaErrors(cudaDeviceSynchronize());
     checkCudaErrors(cudaPeekAtLastError());
-    return result;
+    return *result;
 }
 
 IntersectableGroup* processMesh(const aiMesh* mesh, const aiScene* scene) {
@@ -38,7 +39,7 @@ IntersectableGroup* processMesh(const aiMesh* mesh, const aiScene* scene) {
     std::vector<Point3> texCoords;
 
     // FIXME: use material from file
-    Material* material = deviceNew<Metal>(Color(1,1,1), 0.1);
+    Material* material = deviceNew<Lambertian>(Color(0.7,0.7,0.7));
 
     for(int i = 0; i < mesh->mNumVertices; i++) {
         const auto v = mesh->mVertices[i];
@@ -65,6 +66,14 @@ IntersectableGroup* processMesh(const aiMesh* mesh, const aiScene* scene) {
             exit(-1);
         }
 
+        // TODO: tmp
+        vertices[face.mIndices[0]] *= 10;
+        vertices[face.mIndices[1]] *= 10;
+        vertices[face.mIndices[2]] *= 10;
+
+        vertices[face.mIndices[0]] += Vec3(3,0,0);
+        vertices[face.mIndices[1]] += Vec3(3,0,0);
+        vertices[face.mIndices[2]] += Vec3(3,0,0);
         auto pos0 = vertices[face.mIndices[0]];
         auto pos1 = vertices[face.mIndices[1]];
         auto pos2 = vertices[face.mIndices[2]];
@@ -114,6 +123,8 @@ __host__ TriangleMesh* TriangleMesh::loadFromFile(const std::string &name) {
         std::cerr << "Failed to load mesh " << name << std::endl;
         exit(-1);
     }
+
+    std::cout << "Import from Assimp worked, converting to triangles." << std::endl;
 
     IntersectableGroup* group = processNodes(scene->mRootNode, scene);
 
