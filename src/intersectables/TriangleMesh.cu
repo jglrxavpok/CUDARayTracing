@@ -25,7 +25,7 @@ T* deviceNew(Args ... args) {
     T** result;
     cudaMallocManaged(&result, sizeof(T**));
     allocate<T> <<<1, 1>>>(result, args...);
-    checkCudaErrors(cudaDeviceSynchronize());
+    checkCudaErrorsWithMessage(cudaDeviceSynchronize(), typeid(T).name());
     checkCudaErrors(cudaPeekAtLastError());
     return *result;
 }
@@ -110,6 +110,7 @@ IntersectableGroup* processNodes(const aiNode* node, const aiScene* scene) {
     for(int i = 0; i < meshes.size(); i++) {
         components[i] = meshes[i];
     }
+    checkCudaErrors(cudaDeviceSynchronize());
 
     return deviceNew<IntersectableGroup>(meshes.size(), components);
 }
@@ -134,4 +135,8 @@ __host__ TriangleMesh* TriangleMesh::loadFromFile(const std::string &name) {
 
 __device__ bool TriangleMesh::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
     return backingRepresentation->hit(ray, mint, maxt, result);
+}
+
+__device__ const AABB &TriangleMesh::getAABB() const {
+    return backingRepresentation->getAABB();
 }

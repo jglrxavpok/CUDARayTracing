@@ -7,7 +7,8 @@
 #include <utility>
 #include "Material.h"
 
-__device__ Sphere::Sphere(Point3 center, double radius, Material* material): center(center), radius(radius), material(material) {}
+__device__ Sphere::Sphere(Point3 center, double radius, Material* material): center(center), radius(radius), material(material),
+aabb(center-Vec3(radius, radius, radius), center+Vec3(radius, radius, radius)) {}
 
 __device__ void Sphere::fillResult(HitResult& result, const Ray& ray, double t) const {
     Point3 intersectionPoint = ray.at(t);
@@ -50,4 +51,8 @@ __device__ Point3 Sphere::getCenter() const {
 
 __device__ double Sphere::getRadius() const {
     return radius;
+}
+
+__device__ const AABB& Sphere::getAABB() const {
+    return aabb;
 }

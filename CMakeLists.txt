@@ -25,6 +25,7 @@ set(CXXFILES
         src/materials/Dielectric.cu
         src/materials/Textured.cu
         src/Texture.cu
+        src/AABB.cu
         )
 
 include_directories(${PROJECT_SOURCE_DIR}/src)

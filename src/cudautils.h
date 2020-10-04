@@ -9,12 +9,14 @@
 #include <cuda.h>
 #include <iostream>
 
-#define checkCudaErrors(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+#define checkCudaErrorsWithMessage(ans, msg) { gpuAssert((ans), __FILE__, __LINE__, msg); }
+#define checkCudaErrors(ans) checkCudaErrorsWithMessage(ans, "")
+
+inline void gpuAssert(cudaError_t code, const char *file, int line, const char* customMessage, bool abort=true)
 {
     if (code != cudaSuccess)
     {
-        fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
+        fprintf(stderr,"GPUassert: %s %s (%s) %d\n", cudaGetErrorString(code), file, customMessage, line);
         if (abort) exit(code);
     }
 }

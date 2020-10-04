@@ -75,6 +75,18 @@ public:
         return { x()/l, y()/l, z()/l };
     }
 
+    __device__ __host__ void setX(double value) {
+        _x = value;
+    }
+
+    __device__ __host__ void setY(double value) {
+        _y = value;
+    }
+
+    __device__ __host__ void setZ(double value) {
+        _z = value;
+    }
+
 public:
     __device__ static Vec3 random(curandState* rand, double min, double max);
     __device__ static Vec3 randomInUnitSphere(curandState* rand);

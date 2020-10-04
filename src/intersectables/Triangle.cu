@@ -9,7 +9,8 @@ __device__ Triangle::Triangle(Point3 a, Point3 b, Point3 c,
         Vec3 uvA, Vec3 uvB, Vec3 uvC,
         Material *material): a(a), b(b), c(c), normalA(normalA), normalB(normalB), normalC(normalC),
         uvA(uvA), uvB(uvB), uvC(uvC),
-        material(material) {}
+        material(material),
+        aabb(minVec(a, b, c), maxVec(a, b, c)){}
 
 // Möller–Trumbore algorithm
 __device__ bool Triangle::hit(const Ray &ray, double mint, double maxt, HitResult &result) const {
@@ -47,4 +48,22 @@ __device__ bool Triangle::hit(const Ray &ray, double mint, double maxt, HitResul
         return true;
     }
     return false;
+}
+
+__device__ const AABB &Triangle::getAABB() const {
+    return aabb;
+}
+
+__device__ Vec3 Triangle::maxVec(Vec3 a, Vec3 b, Vec3 c) {
+    double maxX = max(max(a.x(), b.x()), c.x());
+    double maxY = max(max(a.y(), b.y()), c.y());
+    double maxZ = max(max(a.z(), b.z()), c.z());
+    return {maxX, maxY, maxZ};
+}
+
+__device__ Vec3 Triangle::minVec(Vec3 a, Vec3 b, Vec3 c) {
+    double minX = min(min(a.x(), b.x()), c.x());
+    double minY = min(min(a.y(), b.y()), c.y());
+    double minZ = min(min(a.z(), b.z()), c.z());
+    return {minX, minY, minZ};
 }

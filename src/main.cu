@@ -4,6 +4,7 @@
 #include "stb_image.h"
 #include <iostream>
 #include <math.h>
+#include <chrono>
 #include <curand_kernel.h>
 #include "cudautils.h"
 #include <intersectables/Sphere.h>
@@ -38,7 +39,8 @@ __device__ Color trace(const Ray& r, const Intersectable* world, curandState* ra
     }
 
     HitResult result{};
-    if(world->hit(r, 0.001, INFINITY, result)) { // 0.001 to remove shadow acne
+
+    if(world->trace(r, 0.001, INFINITY, result)) { // 0.001 to remove shadow acne
         Ray scattered{};
         Color attenuation{};
         if(result.material->scatter(r, result, rand, attenuation, scattered)) {
@@ -46,7 +48,6 @@ __device__ Color trace(const Ray& r, const Intersectable* world, curandState* ra
         }
         return white;
     }
-
 
     Vec3 direction = r.direction();
     // map from -1..1 to 0..1
@@ -147,11 +148,16 @@ int main()
 
     std::cout << "Scene initialized" << std::endl;
 
+    auto startTime = std::chrono::system_clock::now();
+
     rayTrace<<<blocks, threads>>>(pixels, deviceRNG, world);
     checkCudaErrors(cudaPeekAtLastError());
     checkCudaErrors(cudaDeviceSynchronize());
 
+    auto endTime = std::chrono::system_clock::now();
+
     std::cout << "Done, writing to file" << std::endl;
+    std::cout << "Generation took " << std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count()/1000000.0 << " seconds." << std::endl;
 
     stbi_write_png("./test.png", IMAGE_WIDTH, IMAGE_HEIGHT, 4, pixels, IMAGE_WIDTH*4);
     checkCudaErrors(cudaFree(pixels));
